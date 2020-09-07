@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Form from './components/Form'
 import Axios from 'axios'
 import ImagesList from './components/ImagesList'
+import Error from './components/Error'
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
   const [ images, setImages ] = useState([])
   const [ showbuttons, setShowButtons ] = useState( false )
   const [ resetpage, setResetPage ] = useState( false )
+  const [ noresult, setNoresult ] = useState( false )
 
 
   // useEffect
@@ -38,11 +40,16 @@ function App() {
 
       setShowButtons( true )
       setResetPage( false )
+
+      if( images.length === 0 ) {
+        setNoresult( true )
+      }
+      else { setNoresult( false ) }
     }
     
     resApi()
 
-  }, [ mysearch, actualpage, resetpage ])
+  }, [ mysearch, actualpage, resetpage, images.length ])
 
   const prevPage = () => {
     const newActualPage = actualpage - 1
@@ -75,7 +82,7 @@ function App() {
           images={ images }
         />
         {
-          ( actualpage === 1 || !showbuttons) ? null : 
+          ( actualpage === 1 || !showbuttons || images.length === 0 ) ? null : 
             (
               <button 
                 type="button"
@@ -87,7 +94,7 @@ function App() {
             )
         }
         {
-          ( actualpage === numberofpage || !showbuttons ) ? null : 
+          ( actualpage === numberofpage || !showbuttons || images.length === 0 ) ? null : 
             (
               <button 
                 type="button"
@@ -97,7 +104,8 @@ function App() {
                  Siguiente &raquo; 
               </button>
             )
-        }        
+        }  
+        { noresult ?  <Error message="No se han encontrado resultados. Intenta denuevo" /> : null }
       </div>
     </div>
   );
